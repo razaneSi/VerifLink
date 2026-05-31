@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>VerifLink — Phishing Detection</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<div class="page-wrap">
+
+  <!-- ========== HEADER ========== -->
+  <header>
+    <a class="logo" href="#">
+      <!-- Shield + link chain logo -->
+      <svg class="logo-icon" viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="shieldGrad" x1="0" y1="0" x2="38" y2="38" gradientUnits="userSpaceOnUse">
+            <stop stop-color="var(--logo-accent)" stop-opacity="0.9"/>
+            <stop offset="1" stop-color="var(--btn-hover)" stop-opacity="0.7"/>
+          </linearGradient>
+        </defs>
+        <path d="M19 3L6 8.5V19C6 26.18 11.6 32.88 19 35C26.4 32.88 32 26.18 32 19V8.5L19 3Z"
+              fill="url(#shieldGrad)" opacity="0.18"/>
+        <path d="M19 3L6 8.5V19C6 26.18 11.6 32.88 19 35C26.4 32.88 32 26.18 32 19V8.5L19 3Z"
+              stroke="var(--logo-accent)" stroke-width="1.8" stroke-linejoin="round"/>
+        <!-- chain link left -->
+        <rect x="10.5" y="16.5" width="7" height="5" rx="2.5"
+              stroke="var(--logo-accent)" stroke-width="1.6" fill="none"/>
+        <!-- chain link right -->
+        <rect x="20.5" y="16.5" width="7" height="5" rx="2.5"
+              stroke="var(--logo-accent)" stroke-width="1.6" fill="none"/>
+        <!-- connector -->
+        <line x1="17.5" y1="19" x2="20.5" y2="19"
+              stroke="var(--logo-accent)" stroke-width="1.6"/>
+        <!-- checkmark tick — hidden by default, shown via JS on safe -->
+        <path class="shield-check" d="M14 19.5L17.5 23L24 16" 
+              stroke="var(--safe-color)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"
+              opacity="0"/>
+      </svg>
+      <span class="logo-wordmark">Verif<span>Link</span></span>
+    </a>
+
+    <!-- Theme switcher -->
+    <div class="theme-switcher" role="group" aria-label="Choose theme">
+      <button class="theme-btn active" data-t="light"       title="Light theme"       aria-label="Light theme"></button>
+      <button class="theme-btn"        data-t="dark-blue"   title="Dark blue theme"   aria-label="Dark blue theme"></button>
+      <button class="theme-btn"        data-t="dark-purple" title="Dark purple theme" aria-label="Dark purple theme"></button>
+    </div>
+  </header>
+
+  <!-- ========== HERO ========== -->
+  <div class="hero">
+    <div class="hero-eyebrow">
+      <svg viewBox="0 0 10 10" fill="currentColor"><circle cx="5" cy="5" r="4"/></svg>
+      Real-time threat analysis
+    </div>
+    <h1>Is that link <em>safe</em> to open?</h1>
+    <p>Paste any URL below and VerifLink will analyze it for phishing indicators, suspicious patterns, and known threats — instantly.</p>
+  </div>
+
+  <!-- ========== MAIN CARD ========== -->
+  <div class="card" id="mainCard">
+
+    <!-- Input -->
+    <div class="input-row">
+      <div class="url-input-wrap">
+        <input 
+          class="url-input"
+          id="urlInput"
+          type="url"
+          placeholder="https://example.com/some/path"
+          autocomplete="off"
+          spellcheck="false"
+          aria-label="URL to analyze"
+        />
+        <span class="url-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+          </svg>
+        </span>
+      </div>
+      <button class="scan-btn" id="scanBtn" aria-label="Scan URL">
+        <svg id="scanBtnIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"/>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <span id="scanBtnText">Scan URL</span>
+      </button>
+    </div>
+
+    <!-- Scanning animation -->
+    <div class="scan-stage" id="scanStage">
+      <div class="scan-visual">
+        <div class="scan-bar"></div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+        <div class="scan-dots">
+          <div class="scan-dot"></div>
+          <div class="scan-dot"></div>
+          <div class="scan-dot"></div>
+        </div>
+        <div class="scan-label" id="scanLabel">Analyzing URL structure…</div>
+      </div>
+    </div>
+
+    <!-- Divider (shown after scan) -->
+    <div class="divider" id="resultDivider" style="display:none;">Analysis Result</div>
+
+    <!-- Result -->
+    <div class="result-wrap" id="resultWrap">
+      <div class="result-card" id="resultCard">
+
+        <div class="result-header">
+          <div class="result-status">
+            <div class="status-icon" id="statusIcon">
+              <!-- icon injected by JS -->
+            </div>
+            <div>
+              <div class="status-label" id="statusLabel">—</div>
+            </div>
+          </div>
+          <span class="risk-badge" id="riskBadge">Score: —</span>
+        </div>
+
+        <div class="result-url" id="resultUrl">—</div>
+
+        <div class="score-section">
+          <div class="score-meta">
+            <span>Risk Score</span>
+            <strong id="scoreValue">0 / 100</strong>
+          </div>
+          <div class="score-bar-track">
+            <div class="score-bar-fill" id="scoreBar"></div>
+          </div>
+        </div>
+
+        <div class="result-details">
+          <div class="detail-slot" id="resultDetails">Details will appear here.</div>
+        </div>
+
+      </div>
+    </div>
+
+  </div><!-- /card -->
+
+  <!-- ========== TIPS ========== -->
+  <div class="tips-row">
+    <div class="tip-chip">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      Checks 40+ threat indicators
+    </div>
+    <div class="tip-chip">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      Results in under 2 seconds
+    </div>
+    <div class="tip-chip">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      Your URL is never stored
+    </div>
+  </div>
+
+  <!-- ========== FOOTER ========== -->
+  <footer>
+    VerifLink — Phishing Detection Engine &nbsp;·&nbsp; <a href="#">Privacy Policy</a><br/>
+    For educational &amp; security research use
+  </footer>
+
+</div><!-- /page-wrap -->
+
+<script src="app.js"></script>
+</body>
+</html>
