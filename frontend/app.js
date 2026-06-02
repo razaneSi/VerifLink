@@ -14,15 +14,32 @@ themeBtns.forEach(btn => {
 /* =========================================================
    ELEMENTS
    ========================================================= */
+// Tabs switching
+const tabUrlBtn      = document.getElementById('tabUrlBtn');
+const tabMsgBtn      = document.getElementById('tabMsgBtn');
+const urlScanView    = document.getElementById('urlScanView');
+const msgScanView    = document.getElementById('msgScanView');
+
+// URL Scanner
 const urlInput       = document.getElementById('urlInput');
 const scanBtn        = document.getElementById('scanBtn');
 const scanBtnText    = document.getElementById('scanBtnText');
+
+// Message Scanner
+const senderInput       = document.getElementById('senderInput');
+const msgInput       = document.getElementById('msgInput');
+const scanMsgBtn     = document.getElementById('scanMsgBtn');
+const scanMsgBtnText = document.getElementById('scanMsgBtnText');
+
+// Scan Status Animation stage
 const scanStage      = document.getElementById('scanStage');
 const scanLabel      = document.getElementById('scanLabel');
 
-const resultWrap     = document.getElementById('resultWrap');
-const resultDivider  = document.getElementById('resultDivider');
-const resultCard     = document.getElementById('resultCard');
+// Results layout
+const resultWrap      = document.getElementById('resultWrap');
+const resultDivider   = document.getElementById('resultDivider');
+const resultCard      = document.getElementById('resultCard');
+const resultLabelMini = document.getElementById('resultLabelMini');
 
 const statusIcon     = document.getElementById('statusIcon');
 const statusLabel    = document.getElementById('statusLabel');
@@ -36,6 +53,11 @@ const mainCard       = document.getElementById('mainCard');
 const shieldCheck    = document.querySelector('.shield-check');
 
 /* =========================================================
+   STATE VARIABLES
+   ========================================================= */
+let currentScanType = 'url'; // 'url' or 'message'
+
+/* =========================================================
    LOADING MESSAGES
    ========================================================= */
 const SCAN_MESSAGES = [
@@ -43,6 +65,14 @@ const SCAN_MESSAGES = [
   'Checking domain reputation…',
   'Scanning for redirect chains…',
   'Running heuristic analysis…',
+  'Finalizing risk score…',
+];
+
+const MSG_SCAN_MESSAGES = [
+  'Parsing message content…',
+  'Checking for suspicious links…',
+  'Analyzing tone and urgency…',
+  'Running heuristic checks…',
   'Finalizing risk score…',
 ];
 
@@ -74,7 +104,7 @@ function isValidClientInput(input) {
    MAIN SCAN FUNCTION (BACKEND CONNECTED)
    ========================================================= */
 async function performScan(url) {
-  const scanInterval = startLoadingAnimation();
+  const scanInterval = startLoadingAnimation(SCAN_MESSAGES, scanBtn, scanBtnText);
 
   try {
     const response = await fetch("http://127.0.0.1:5000/analyze", {
@@ -93,7 +123,8 @@ async function performScan(url) {
       data.url || url,
       data.status?.toLowerCase() || "dangerous",
       data.score ?? 100,
-      (data.reasons || []).join(" • ")
+      (data.reasons || []).join(" • "),
+      false
     );
 
   } catch (err) {
@@ -103,7 +134,47 @@ async function performScan(url) {
       url,
       "dangerous",
       100,
-      "Unable to contact backend server or invalid response."
+      "Unable to contact backend server or invalid response.",
+      false
+    );
+
+    console.error(err);
+  }
+}
+
+async function performMessageScan(message) {
+  const scanInterval = startLoadingAnimation(MSG_SCAN_MESSAGES, scanMsgBtn, scanMsgBtnText);
+
+  try {
+    const response = await fetch("http://127.0.0.1:5000/analyze-message", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ sender: senderInput.value.trim(), message: msgInput.value.trim() })
+    });
+
+    if (!response.ok) throw new Error("Backend error");
+
+    const data = await response.json();
+
+    clearInterval(scanInterval);
+
+    renderResult(
+      data.message || message,
+      data.status?.toLowerCase() || "dangerous",
+      data.score ?? 100,
+      (data.reasons || []).join(" • "),
+      true
+    );
+
+  } catch (err) {
+    clearInterval(scanInterval);
+
+    renderResult(
+      message,
+      "dangerous",
+      100,
+      "Unable to contact backend server or invalid response.",
+      true
     );
 
     console.error(err);
@@ -111,7 +182,7 @@ async function performScan(url) {
 }
 
 /* =========================================================
-   SCAN BUTTON
+   SCAN ACTIONS
    ========================================================= */
 function startScan() {
   const raw = urlInput.value.trim();
@@ -128,22 +199,35 @@ function startScan() {
   performScan(url);
 }
 
+function startMessageScan() {
+  const raw = msgInput.value.trim();
+
+  // ❌ reject empty input
+  if (!raw) {
+    shake(msgInput);
+    return;
+  }
+
+  resetUIForScan();
+  performMessageScan(raw);
+}
+
 /* =========================================================
    LOADING ANIMATION
    ========================================================= */
 let msgIdx = 0;
 
-function startLoadingAnimation() {
+function startLoadingAnimation(messages, btn, btnText) {
   scanStage.classList.add('visible');
-  scanBtn.classList.add('loading');
-  scanBtnText.textContent = 'Scanning…';
+  btn.classList.add('loading');
+  btnText.textContent = 'Scanning…';
 
-  scanLabel.textContent = SCAN_MESSAGES[0];
+  scanLabel.textContent = messages[0];
   msgIdx = 0;
 
   return setInterval(() => {
-    msgIdx = (msgIdx + 1) % SCAN_MESSAGES.length;
-    scanLabel.textContent = SCAN_MESSAGES[msgIdx];
+    msgIdx = (msgIdx + 1) % messages.length;
+    scanLabel.textContent = messages[msgIdx];
   }, 520);
 }
 
@@ -162,10 +246,14 @@ function resetUIForScan() {
 /* =========================================================
    RENDER RESULT
    ========================================================= */
-function renderResult(url, status, score, detail) {
+function renderResult(content, status, score, detail, isMessage = false) {
   scanStage.classList.remove('visible');
+  
   scanBtn.classList.remove('loading');
   scanBtnText.textContent = 'Scan URL';
+
+  scanMsgBtn.classList.remove('loading');
+  scanMsgBtnText.textContent = 'Scan Message';
 
   resultCard.className = `result-card ${status}`;
   statusIcon.innerHTML = ICONS[status] || ICONS.dangerous;
@@ -175,7 +263,16 @@ function renderResult(url, status, score, detail) {
     status === 'suspicious' ? 'Suspicious' : 'Dangerous';
 
   riskBadge.textContent = `Risk: ${score}/100`;
-  resultUrl.textContent = url.length > 70 ? url.slice(0, 67) + '…' : url;
+
+  if (isMessage) {
+    resultUrl.classList.add('message-type');
+    resultUrl.textContent = content.length > 500 ? content.slice(0, 497) + '…' : content;
+  } else {
+    resultUrl.classList.remove('message-type');
+    resultUrl.textContent = content.length > 70 ? content.slice(0, 67) + '…' : content;
+  }
+
+  resultLabelMini.textContent = isMessage ? 'Scanned Message' : 'Scanned URL';
   scoreValue.textContent = `${score} / 100`;
   resultDetails.textContent = detail;
 
@@ -226,16 +323,56 @@ function shake(el) {
 }
 
 /* =========================================================
+   TAB SWITCHING LOGIC
+   ========================================================= */
+function switchTab(tabType) {
+  currentScanType = tabType;
+  
+  if (tabType === 'url') {
+    tabUrlBtn.classList.add('active');
+    tabMsgBtn.classList.remove('active');
+    urlScanView.classList.add('active');
+    msgScanView.classList.remove('active');
+  } else {
+    tabMsgBtn.classList.add('active');
+    tabUrlBtn.classList.remove('active');
+    msgScanView.classList.add('active');
+    urlScanView.classList.remove('active');
+  }
+
+  resetUIForScan();
+}
+
+/* =========================================================
    EVENTS
    ========================================================= */
+tabUrlBtn.addEventListener('click', () => switchTab('url'));
+tabMsgBtn.addEventListener('click', () => switchTab('message'));
+
 scanBtn.addEventListener('click', startScan);
+scanMsgBtn.addEventListener('click', startMessageScan);
 
 urlInput.addEventListener('keydown', e => {
   if (e.key === 'Enter') startScan();
 });
 
+msgInput.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    startMessageScan();
+  }
+});
+
 urlInput.addEventListener('input', () => {
-  if (resultWrap.classList.contains('visible')) {
+  if (resultWrap.classList.contains('visible') && currentScanType === 'url') {
+    resultWrap.classList.remove('visible');
+    resultDivider.style.display = 'none';
+    shieldCheck.setAttribute('opacity', '0');
+  }
+});
+
+msgInput.addEventListener('input', () => {
+  if (resultWrap.classList.contains('visible') && currentScanType === 'message') {
     resultWrap.classList.remove('visible');
     resultDivider.style.display = 'none';
     shieldCheck.setAttribute('opacity', '0');

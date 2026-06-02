@@ -698,3 +698,191 @@ footer a { color: var(--chip-text); text-decoration: none; }
 .card.glow-safe      { animation: glow-safe 1.2s ease 2; }
 .card.glow-suspicious { animation: glow-suspicious 1.2s ease 2; }
 .card.glow-dangerous  { animation: glow-dangerous 1.2s ease 2; }
+
+/* =========================================================
+   TAB SWITCHING STYLING
+   ========================================================= */
+.tabs-container {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 1.8rem;
+  border-bottom: 1.5px solid var(--divider);
+  padding-bottom: 0.8rem;
+}
+
+.tab-btn {
+  background: none;
+  border: none;
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: color var(--transition), background-color var(--transition), transform 0.15s ease;
+}
+
+.tab-btn svg {
+  transition: transform 0.2s ease;
+}
+
+.tab-btn:hover {
+  color: var(--text-primary);
+  background: var(--chip-bg);
+}
+
+.tab-btn:hover svg {
+  transform: scale(1.1);
+}
+
+.tab-btn.active {
+  color: var(--btn-text);
+  background: var(--btn-bg);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.tab-view {
+  display: none;
+  animation: tabFadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.tab-view.active {
+  display: block;
+}
+
+@keyframes tabFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* =========================================================
+   MESSAGE SCANNER VIEW STYLING
+   ========================================================= */
+.msg-input-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.msg-input-wrap {
+  position: relative;
+  width: 100%;
+}
+
+.msg-input {
+  width: 100%;
+  height: 110px;
+  background: var(--input-bg);
+  border: 1.5px solid var(--input-border);
+  border-radius: var(--radius-sm);
+  padding: 14px 16px 14px 42px;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 400;
+  color: var(--text-primary);
+  outline: none;
+  transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+  backdrop-filter: blur(8px);
+  resize: vertical;
+  min-height: 80px;
+}
+
+.msg-input::placeholder {
+  color: var(--text-muted);
+}
+
+.msg-input:focus {
+  border-color: var(--input-focus);
+  box-shadow: 0 0 0 3px rgba(116, 138, 215, 0.15);
+}
+
+.msg-icon {
+  position: absolute;
+  left: 14px;
+  top: 17px;
+  color: var(--text-muted);
+  pointer-events: none;
+  transition: color var(--transition);
+}
+
+.msg-input:focus + .msg-icon,
+.msg-input:focus ~ .msg-icon {
+  color: var(--input-focus);
+}
+
+.msg-btn-wrap {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.msg-btn-wrap .scan-btn {
+  width: 100%;
+}
+
+@media (min-width: 601px) {
+  .msg-btn-wrap .scan-btn {
+    width: auto;
+  }
+}
+
+/* =========================================================
+   RESULT CONTAINER ENHANCEMENT
+   ========================================================= */
+.result-label-mini {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  margin-bottom: -4px;
+  margin-top: 0.2rem;
+}
+
+.result-url.message-type {
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-height: 150px;
+  overflow-y: auto;
+  line-height: 1.5;
+  padding: 10px 14px;
+}
+/* =========================================================
+   SENDER INPUT
+   ========================================================= */
+.sender-input {
+  width: 100%;
+  height: 44px;
+  background: var(--input-bg);
+  border: 1.5px solid var(--input-border);
+  border-radius: var(--radius-sm);
+  padding: 0 16px;
+  font-family: var(--font-body);
+  font-size: 0.92rem;
+  font-weight: 400;
+  color: var(--text-primary);
+  outline: none;
+  transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+  backdrop-filter: blur(8px);
+}
+
+.sender-input::placeholder {
+  color: var(--text-muted);
+  font-size: 0.88rem;
+}
+
+.sender-input:focus {
+  border-color: var(--input-focus);
+  box-shadow: 0 0 0 3px rgba(116, 138, 215, 0.15);
+}

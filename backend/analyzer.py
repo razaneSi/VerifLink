@@ -41,7 +41,9 @@ CHAR_MAP = str.maketrans({
     "5": "s",
     "$": "s"
 })
-
+# =========================================================
+# URL checker core functions
+# =========================================================
 def extract_root(domain):
     parts = domain.lower().split(".")
     if len(parts) < 2:
@@ -76,7 +78,7 @@ def is_typosquat(domain, brand):
 
     similarity = 1 - (distance / max_len)
 
-    # 🔥 FIXED THRESHOLD (this was the main bug)
+   
     return similarity >= 0.65 and similarity < 1.0
 
 
@@ -218,7 +220,7 @@ def analyze_url(url):
         reasons.append(f"Phishing keywords detected ({keyword_hits})")
 
     # =========================================================
-    # TYPOSQUATTING (🔥 MOVED EARLY + STRONG WEIGHT)
+    # TYPOSQUATTING
     # =========================================================
 
     typo = detect_typosquatting(domain)

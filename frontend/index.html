@@ -66,32 +66,90 @@
   <!-- ========== MAIN CARD ========== -->
   <div class="card" id="mainCard">
 
-    <!-- Input -->
-    <div class="input-row">
-      <div class="url-input-wrap">
+    <!-- Tab Switching Buttons -->
+    <div class="tabs-container">
+      <button class="tab-btn active" id="tabUrlBtn" aria-label="Switch to URL Scanner">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+          <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+        </svg>
+        URL Scanner
+      </button>
+      <button class="tab-btn" id="tabMsgBtn" aria-label="Switch to Message Scanner">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+        </svg>
+        Message Scanner
+      </button>
+    </div>
+
+    <!-- URL Scan View -->
+    <div class="tab-view active" id="urlScanView">
+      <div class="input-row">
+        <div class="url-input-wrap">
+          <input 
+            class="url-input"
+            id="urlInput"
+            type="url"
+            placeholder="https://example.com/some/path"
+            autocomplete="off"
+            spellcheck="false"
+            aria-label="URL to analyze"
+          />
+          <span class="url-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+              <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+            </svg>
+          </span>
+        </div>
+        <button class="scan-btn" id="scanBtn" aria-label="Scan URL">
+          <svg id="scanBtnIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"/>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+          <span id="scanBtnText">Scan URL</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Message Scan View -->
+    <div class="tab-view" id="msgScanView">
+      <div class="msg-input-container">
         <input 
-          class="url-input"
-          id="urlInput"
-          type="url"
-          placeholder="https://example.com/some/path"
+          class="sender-input"
+          id="senderInput"
+          type="text"
+          placeholder="Sender (e.g., +15550101 or support@bank.com)"
           autocomplete="off"
           spellcheck="false"
-          aria-label="URL to analyze"
+          aria-label="Sender of the message"
         />
-        <span class="url-icon">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
-            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
-          </svg>
-        </span>
+        <div class="msg-input-wrap">
+          <textarea 
+            class="msg-input"
+            id="msgInput"
+            placeholder="Paste a suspicious SMS, email, or chat message here to analyze..."
+            autocomplete="off"
+            spellcheck="false"
+            aria-label="Message to analyze"
+          ></textarea>
+          <span class="msg-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            </svg>
+          </span>
+        </div>
+        <div class="msg-btn-wrap">
+          <button class="scan-btn" id="scanMsgBtn" aria-label="Scan Message">
+            <svg id="scanMsgBtnIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"/>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <span id="scanMsgBtnText">Scan Message</span>
+          </button>
+        </div>
       </div>
-      <button class="scan-btn" id="scanBtn" aria-label="Scan URL">
-        <svg id="scanBtnIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="11" cy="11" r="8"/>
-          <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-        </svg>
-        <span id="scanBtnText">Scan URL</span>
-      </button>
     </div>
 
     <!-- Scanning animation -->
@@ -128,6 +186,7 @@
           <span class="risk-badge" id="riskBadge">Score: —</span>
         </div>
 
+        <div class="result-label-mini" id="resultLabelMini">Scanned URL</div>
         <div class="result-url" id="resultUrl">—</div>
 
         <div class="score-section">
