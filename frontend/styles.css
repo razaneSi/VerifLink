@@ -144,29 +144,30 @@ body::before {
    ========================================================= */
 header {
   width: 100%;
-  max-width: 820px;
+  max-width: 1500px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0.5rem 0 2.5rem;
+  /*background-color: #4c4b4b38;*/
 }
 
 .logo {
   display: flex;
-  align-items: center;
+  align-items: start;
   gap: 10px;
   text-decoration: none;
 }
 
 .logo-icon {
-  width: 38px;
-  height: 38px;
+  width: 40px;
+  height: 40px;
   flex-shrink: 0;
 }
 
 .logo-wordmark {
   font-family: var(--font-display);
-  font-size: 1.45rem;
+  font-size: 1.50rem;
   font-weight: 800;
   letter-spacing: -0.01em;
   color: var(--text-primary);
