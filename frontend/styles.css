@@ -108,6 +108,7 @@ html { scroll-behavior: smooth; }
 body {
   font-family: var(--font-body);
   min-height: 100vh;
+  position: relative;
   background: linear-gradient(145deg, var(--bg-start) 0%, var(--bg-end) 100%);
   background-attachment: fixed;
   color: var(--text-primary);
@@ -124,6 +125,155 @@ body::before {
   pointer-events: none;
   z-index: 0;
   opacity: 0.55;
+}
+
+/* Animated night-sky background */
+.stars,
+.shooting-star {
+  position: fixed;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.stars {
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 1px;
+  background: rgba(255,255,255,0.92);
+  box-shadow:
+    2vw 5vh 2px rgba(255,255,255,0.9),
+    10vw 8vh 2px rgba(255,255,255,0.85),
+    15vw 15vh 1px rgba(255,255,255,0.8),
+    22vw 22vh 1px rgba(255,255,255,0.72),
+    28vw 12vh 2px rgba(255,255,255,0.86),
+    32vw 32vh 1px rgba(255,255,255,0.75),
+    38vw 18vh 2px rgba(255,255,255,0.9),
+    42vw 35vh 1px rgba(255,255,255,0.72),
+    48vw 25vh 2px rgba(255,255,255,0.86),
+    53vw 42vh 1px rgba(255,255,255,0.75),
+    58vw 15vh 2px rgba(255,255,255,0.9),
+    63vw 38vh 1px rgba(255,255,255,0.72),
+    68vw 28vh 2px rgba(255,255,255,0.86),
+    73vw 45vh 1px rgba(255,255,255,0.75),
+    78vw 32vh 2px rgba(255,255,255,0.9),
+    83vw 48vh 1px rgba(255,255,255,0.72),
+    88vw 20vh 2px rgba(255,255,255,0.86),
+    93vw 52vh 1px rgba(255,255,255,0.75),
+    98vw 35vh 2px rgba(255,255,255,0.9),
+    5vw 60vh 1px rgba(255,255,255,0.72),
+    12vw 65vh 2px rgba(255,255,255,0.86),
+    18vw 72vh 1px rgba(255,255,255,0.75),
+    25vw 78vh 2px rgba(255,255,255,0.9),
+    30vw 85vh 1px rgba(255,255,255,0.72),
+    35vw 68vh 2px rgba(255,255,255,0.86),
+    40vw 82vh 1px rgba(255,255,255,0.75),
+    45vw 92vh 2px rgba(255,255,255,0.9),
+    50vw 75vh 1px rgba(255,255,255,0.72),
+    55vw 88vh 2px rgba(255,255,255,0.86),
+    60vw 95vh 1px rgba(255,255,255,0.75),
+    65vw 72vh 2px rgba(255,255,255,0.9),
+    70vw 85vh 1px rgba(255,255,255,0.72),
+    75vw 78vh 2px rgba(255,255,255,0.86),
+    80vw 92vh 1px rgba(255,255,255,0.75),
+    85vw 82vh 2px rgba(255,255,255,0.9),
+    90vw 88vh 1px rgba(255,255,255,0.72),
+    95vw 75vh 2px rgba(255,255,255,0.86);
+  animation: twinkle 8s infinite linear;
+}
+
+.stars::after {
+  content: "";
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  background: rgba(255,255,255,0.85);
+  box-shadow:
+    8vw 12vh 2px rgba(255,255,255,0.82),
+    16vw 18vh 1px rgba(255,255,255,0.72),
+    24vw 25vh 2px rgba(255,255,255,0.86),
+    33vw 15vh 1px rgba(255,255,255,0.74),
+    41vw 28vh 2px rgba(255,255,255,0.88),
+    49vw 35vh 1px rgba(255,255,255,0.72),
+    57vw 22vh 2px rgba(255,255,255,0.86),
+    65vw 42vh 1px rgba(255,255,255,0.74),
+    73vw 28vh 2px rgba(255,255,255,0.88),
+    81vw 48vh 1px rgba(255,255,255,0.72),
+    89vw 32vh 2px rgba(255,255,255,0.86),
+    97vw 45vh 1px rgba(255,255,255,0.74),
+    3vw 68vh 2px rgba(255,255,255,0.88),
+    11vw 75vh 1px rgba(255,255,255,0.72),
+    19vw 82vh 2px rgba(255,255,255,0.86),
+    27vw 88vh 1px rgba(255,255,255,0.74),
+    35vw 72vh 2px rgba(255,255,255,0.88),
+    43vw 85vh 1px rgba(255,255,255,0.72),
+    51vw 92vh 2px rgba(255,255,255,0.86),
+    59vw 78vh 1px rgba(255,255,255,0.74);
+  animation: twinkle 6s infinite linear reverse;
+}
+
+.shooting-star {
+  top: 20%;
+  left: -120px;
+  width: 120px;
+  height: 2px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(255,255,255,0.95), rgba(255,255,255,0));
+  filter: drop-shadow(0 0 6px rgba(255,255,255,0.55));
+  opacity: 0;
+  transform: rotate(25deg);
+  animation: shoot 5s infinite ease-in;
+}
+
+.shooting-star:nth-of-type(3) {
+  top: 34%;
+  animation-delay: 1.1s;
+  animation-duration: 4.4s;
+}
+
+.shooting-star:nth-of-type(4) {
+  top: 48%;
+  animation-delay: 2.2s;
+  animation-duration: 5.2s;
+}
+
+.shooting-star:nth-of-type(5) {
+  top: 15%;
+  animation-delay: 3.1s;
+  animation-duration: 4.8s;
+}
+
+.shooting-star:nth-of-type(6) {
+  top: 62%;
+  animation-delay: 4s;
+  animation-duration: 5.6s;
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.8; }
+  50% { opacity: 0.35; }
+}
+
+@keyframes shoot {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 0, 0) rotate(25deg);
+  }
+  8% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(120vw, 45vh, 0) rotate(25deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stars,
+  .stars::after,
+  .shooting-star {
+    animation: none;
+  }
 }
 
 /* =========================================================
