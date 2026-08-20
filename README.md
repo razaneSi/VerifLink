@@ -78,6 +78,13 @@ The frontend will call the backend at `http://127.0.0.1:5000/...`.
 
 ---
 
+## For missing packages
+```console
+$ pip install -r requirements.txt
+```
+
+---
+
 ## Notes
 - This project is intended for **educational and security research use**.
 - Always treat results as **assistance**, not absolute guarantees.
